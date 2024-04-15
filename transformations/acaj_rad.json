@@ -1,9 +1,9 @@
 {
   "ioc_code": "acaj",
   "sensor": "rad",
-  "notes": "Two segments",
-  "skip": false,
-  "wip": false,
+  "notes": "Contains segments",
+  "skip": true,
+  "wip": true,
   "start": "2022-01-01T00:00:00",
   "end": "2023-11-01T00:00:00",
   "high": null,

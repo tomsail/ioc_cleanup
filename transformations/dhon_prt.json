@@ -1,7 +1,7 @@
 {
-  "ioc_code": "kerg2",
-  "sensor": "rad",
-  "notes": "",
+  "ioc_code": "dhon",
+  "sensor": "prt",
+  "notes": "Contains segments",
   "skip": true,
   "wip": true,
   "start": "2022-01-01T00:00:00",

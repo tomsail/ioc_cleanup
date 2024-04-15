@@ -1,6 +1,6 @@
 {
-  "ioc_code": "anta",
-  "sensor": "rad",
+  "ioc_code": "yaku",
+  "sensor": "pwl",
   "notes": "",
   "skip": false,
   "wip": false,
@@ -8,12 +8,7 @@
   "end": "2023-11-01T00:00:00",
   "high": null,
   "low": null,
-  "dropped_date_ranges": [
-    [
-      "2023-04-04T07:25:30",
-      "2023-04-04T10:37:30"
-    ]
-  ],
+  "dropped_date_ranges": [],
   "dropped_timestamps": [],
   "segments": []
 }

@@ -1,17 +1,17 @@
 {
-  "ioc_code": "anta",
+  "ioc_code": "diep2",
   "sensor": "rad",
-  "notes": "",
-  "skip": false,
-  "wip": false,
+  "notes": "Cleanable, but many small spikes",
+  "skip": true,
+  "wip": true,
   "start": "2022-01-01T00:00:00",
   "end": "2023-11-01T00:00:00",
   "high": null,
   "low": null,
   "dropped_date_ranges": [
     [
-      "2023-04-04T07:25:30",
-      "2023-04-04T10:37:30"
+      "2022-01-01T00:01:00",
+      "2022-02-02T16:39:00"
     ]
   ],
   "dropped_timestamps": [],

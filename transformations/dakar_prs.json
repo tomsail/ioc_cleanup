@@ -1,6 +1,6 @@
 {
-  "ioc_code": "kerg2",
-  "sensor": "rad",
+  "ioc_code": "dakar",
+  "sensor": "prs",
   "notes": "",
   "skip": true,
   "wip": true,

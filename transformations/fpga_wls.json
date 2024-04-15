@@ -1,9 +1,9 @@
 {
-  "ioc_code": "kerg2",
-  "sensor": "rad",
-  "notes": "",
+  "ioc_code": "fpga",
+  "sensor": "wls",
+  "notes": "Many small spikes",
   "skip": true,
-  "wip": true,
+  "wip": false,
   "start": "2022-01-01T00:00:00",
   "end": "2023-11-01T00:00:00",
   "high": null,

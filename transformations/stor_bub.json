@@ -1,6 +1,6 @@
 {
-  "ioc_code": "anta",
-  "sensor": "rad",
+  "ioc_code": "stor",
+  "sensor": "bub",
   "notes": "",
   "skip": false,
   "wip": false,
@@ -10,8 +10,12 @@
   "low": null,
   "dropped_date_ranges": [
     [
-      "2023-04-04T07:25:30",
-      "2023-04-04T10:37:30"
+      "2022-09-28T21:00:00",
+      "2022-09-28T22:45:00"
+    ],
+    [
+      "2022-09-29T09:00:00",
+      "2022-09-29T09:30:00"
     ]
   ],
   "dropped_timestamps": [],

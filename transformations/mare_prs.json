@@ -1,6 +1,6 @@
 {
-  "ioc_code": "anta",
-  "sensor": "rad",
+  "ioc_code": "mare",
+  "sensor": "prs",
   "notes": "",
   "skip": false,
   "wip": false,
@@ -10,8 +10,8 @@
   "low": null,
   "dropped_date_ranges": [
     [
-      "2023-04-04T07:25:30",
-      "2023-04-04T10:37:30"
+      "2022-12-30T00:54:00",
+      "2022-12-31T00:49:00"
     ]
   ],
   "dropped_timestamps": [],
