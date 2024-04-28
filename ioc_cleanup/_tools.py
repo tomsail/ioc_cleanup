@@ -43,7 +43,7 @@ def transform(df: pd.DataFrame, transformation: _models.Transformation | None = 
     for start, end in transformation.dropped_date_ranges:
         df[start:end] = np.nan  # type: ignore[misc]  # https://stackoverflow.com/questions/70763542/pandas-dataframe-mypy-error-slice-index-must-be-an-integer-or-none
     if transformation.dropped_timestamps:
-        df.loc[transformation.dropped_timestamps] = np.nan  # type: ignore[call-overload]
+        df.loc[transformation.dropped_timestamps] = np.nan
     for segment in transformation.segments:
         if segment.scale_factor != 1:
             df[segment.start : segment.end] *= segment.scale_factor  # type: ignore[misc]  # https://stackoverflow.com/questions/70763542/pandas-dataframe-mypy-error-slice-index-must-be-an-integer-or-none
