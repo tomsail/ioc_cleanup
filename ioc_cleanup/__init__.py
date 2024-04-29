@@ -11,6 +11,8 @@ from ._models import Transformation
 from ._plots import compare_dataframes
 from ._plots import plot_geographic_coverage
 from ._plots import select_points
+from ._searvey import download_raw
+from ._searvey import get_meta
 from ._statistics import calc_station_statistics_from_path
 from ._statistics import calc_statistics
 from ._tools import dump_transformation
@@ -26,7 +28,9 @@ __all__: list[str] = [
     "compare_dataframes",
     "DETIDE_END",
     "DETIDE_START",
+    "download_raw",
     "dump_transformation",
+    "get_meta",
     "get_segment",
     "load_transformation",
     "load_transformation_from_path",
