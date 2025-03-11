@@ -5,13 +5,6 @@ import datetime
 import pydantic
 
 
-class Segment(pydantic.BaseModel):
-    start: datetime.datetime
-    end: datetime.datetime
-    offset: float = 0.0
-    scale_factor: float = 1.0
-
-
 class Transformation(pydantic.BaseModel):
     ioc_code: str
     sensor: str
@@ -24,4 +17,5 @@ class Transformation(pydantic.BaseModel):
     low: float | None = None
     dropped_date_ranges: list[tuple[datetime.datetime, datetime.datetime]] = []
     dropped_timestamps: list[datetime.datetime] = []
-    segments: list[Segment] = []
+    breakpoints: list[datetime.datetime] = []
+    tsunami: list[tuple[datetime.datetime, datetime.datetime]] = []

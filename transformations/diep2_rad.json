@@ -1,7 +1,7 @@
 {
   "ioc_code": "diep2",
   "sensor": "rad",
-  "notes": "Cleanable, but many small spikes",
+  "notes": "Cleanable, but many small spikes. better diep station",
   "skip": true,
   "wip": true,
   "start": "2022-01-01T00:00:00",

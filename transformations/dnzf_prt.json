@@ -1,7 +1,7 @@
 {
   "ioc_code": "dnzf",
   "sensor": "prt",
-  "notes": "Contains segments",
+  "notes": "DART station. Contains segments",
   "skip": true,
   "wip": false,
   "start": "2022-01-01T00:00:00",

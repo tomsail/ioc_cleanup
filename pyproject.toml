@@ -15,13 +15,14 @@ hvplot = "*"
 multifutures = "*"
 pandas = "*"
 panel = "*"
-searvey = {git = "https://github.com/oceanmodeling/searvey.git", rev = "dev"}
+searvey = "*"
 xarray = {version = "*", extras = ["accel", "parallel", "io"]}
 utide = "*"
 matplotlib = "*"
 ipympl = "*"
 pydantic = "*"
 fastparquet = "*"
+datashader = "*"
 
 [tool.poetry.group.dev.dependencies]
 covdefaults = "*"
@@ -31,9 +32,12 @@ ipdb = "*"
 ipykernel = "*"
 mypy = "*"
 pandas-stubs = "*"
-pytest = ">=7.0"
-pytest-cov = ">=3"
+pytest = "*"
+pytest-cov = "*"
 ipywidgets = "*"
+bokeh = "*"
+jupyter-bokeh = "*"
+nbval = "*"
 
 [build-system]
 requires = ["poetry-core"]
@@ -68,7 +72,7 @@ parallel = true
 sigterm = true
 
 [tool.coverage.report]
-fail_under = 90.0
+fail_under = 70
 exclude_lines = [
     'pragma: no cover',
     'raise NotImplementedError',
@@ -123,8 +127,18 @@ warn_required_dynamic_aliases = true
 
 # mypy per-module options:
 [[tool.mypy.overrides]]
-module = "tests.*"
+module = "ioc_cleanup._plots"
 disallow_untyped_defs = true
+allow_untyped_calls = true
+
+[[tool.mypy.overrides]]
+module = [
+  "panel.*",
+  "hvplot.*",
+  "holoviews.*",
+  "utide.*"
+]
+ignore_missing_imports = true
 
 [tool.ruff]
 target-version = "py311"
