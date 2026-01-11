@@ -38,6 +38,8 @@ ipywidgets = "*"
 bokeh = "*"
 jupyter-bokeh = "*"
 nbval = "*"
+zensical = "*"
+mkdocstrings-python = "*"
 
 [build-system]
 requires = ["poetry-core"]

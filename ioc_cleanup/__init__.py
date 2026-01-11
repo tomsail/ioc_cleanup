@@ -18,11 +18,13 @@ from ._statistics import calc_station_statistics_from_json
 from ._statistics import calc_station_statistics_from_path
 from ._statistics import calc_statistics
 from ._statistics import calc_statistics_json
+from ._tools import clean
 from ._tools import dump_transformation
 from ._tools import load_clean_ts_for_year
 from ._tools import load_surge_ts_for_year
 from ._tools import load_transformation
 from ._tools import load_transformation_from_path
+from ._tools import surge
 from ._tools import transform
 
 
@@ -32,6 +34,7 @@ __all__: list[str] = [
     "calc_statistics_json",
     "calc_station_statistics",
     "calc_statistics",
+    "clean",
     "DETIDE_END",
     "DETIDE_START",
     "download_raw",
@@ -50,6 +53,7 @@ __all__: list[str] = [
     "SIMULATION_END",
     "SIMULATION_START",
     "SPLIT_DIR",
+    "surge",
     "TRANSFORMATIONS_DIR",
     "transform",
     "Transformation",

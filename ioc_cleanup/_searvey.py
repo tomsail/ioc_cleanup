@@ -15,6 +15,16 @@ logger = logging.getLogger(__name__)
 
 @functools.cache
 def get_meta() -> gpd.GeoDataFrame:
+    """
+    Retrieve IOC station metadata with geographic coordinates.
+
+    Metadata are collected from both the IOC web service and the IOC API
+    and merged into a single GeoDataFrame.
+
+    Returns:
+        GeoDataFrame containing IOC station codes, longitude, latitude,
+        and geometry in EPSG:4326.
+    """
     meta_web = searvey.get_ioc_stations()
     meta_api = (
         pd.read_json("http://www.ioc-sealevelmonitoring.org/service.php?query=stationlist&showall=all")
@@ -35,6 +45,17 @@ def get_meta() -> gpd.GeoDataFrame:
 
 
 def download_raw(ioc_codes: list[str], start: pd.Timestamp, end: pd.Timestamp) -> dict[str, pd.DataFrame]:
+    """
+    Download raw IOC sea-level data for multiple stations.
+
+    Parameters:
+        ioc_codes: List of IOC station codes.
+        start: Start timestamp.
+        end: End timestamp.
+
+    Returns:
+        Dictionary mapping station codes to raw dataframes.
+    """
     no_codes = len(ioc_codes)
     start_dates = pd.DatetimeIndex([start] * no_codes)
     end_dates = pd.DatetimeIndex([end] * no_codes)
@@ -56,6 +77,16 @@ def download_year_station(
     year: int,
     data_folder: str = "./data",
 ) -> None:
+    """
+    Download and store one year of IOC data for a single station.
+
+    Data are saved as Parquet files under `<data_folder>/<year>/`.
+
+    Parameters:
+        station: IOC station code.
+        year: Year to download.
+        data_folder: Base directory for storing downloaded data.
+    """
     data_folder = os.path.abspath(data_folder)
     year_folder = os.path.join(data_folder, str(year))
     os.makedirs(year_folder, exist_ok=True)
@@ -77,6 +108,19 @@ def load_station(
     start_year: int = 2011,
     end_year: int = 2024,
 ) -> pd.DataFrame:
+    """
+    Load multi-year IOC data for a station from local Parquet files.
+
+    Parameters:
+        station: IOC station code.
+        data_dir: Base directory containing yearly Parquet files.
+        start_year: First year to load (inclusive).
+        end_year: Last year to load (exclusive).
+
+    Returns:
+        Concatenated DataFrame containing the available station data.
+        Returns an empty DataFrame if no data are found.
+    """
     dfs = []
     for year in range(start_year, end_year):
         path = data_dir / str(year) / f"{station}.parquet"
