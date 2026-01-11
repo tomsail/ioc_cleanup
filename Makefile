@@ -27,3 +27,6 @@ deps:
 	pre-commit run poetry-lock -a
 	pre-commit run poetry-check -a
 	pre-commit run poetry-export -a
+
+docs:
+	zensical build

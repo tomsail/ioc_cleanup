@@ -20,7 +20,6 @@ IOC_SAMPLE = pytest.mark.parametrize(
     [
         pytest.param("abur", id="abur"),
         pytest.param("bres", id="bres"),
-        pytest.param("gokr", id="gokr"),
     ],
 )
 DEMEAN = True

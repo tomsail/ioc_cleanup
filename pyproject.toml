@@ -38,13 +38,15 @@ ipywidgets = "*"
 bokeh = "*"
 jupyter-bokeh = "*"
 nbval = "*"
+zensical = "*"
+mkdocstrings-python = "*"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-line-length = 120
+line-length = 128
 target-version = ['py311']
 
 [tool.pytest.ini_options]

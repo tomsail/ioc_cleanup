@@ -74,8 +74,9 @@ def plot_geographic_coverage(
 
 
 # Create a function to print selected points
-def print_all_points(df: pd.Series, indices: pd.Index[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
+def print_all_points(df: pd.Series, indices: list[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
     if indices:
+        indices = sorted(indices)
         timestamps = [f'    "{df.index[id_].strftime("%Y-%m-%dT%H:%M:%S")}"' for id_ in indices]
         value = ",\n".join(timestamps)
     else:
@@ -83,8 +84,9 @@ def print_all_points(df: pd.Series, indices: pd.Index[int], text_box: pn.widgets
     text_box.value = value
 
 
-def print_range(df: pd.Series, indices: pd.Index[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
+def print_range(df: pd.Series, indices: list[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
     if indices:
+        indices = sorted(indices)
         first_ts = df.index[indices[0]].strftime("%Y-%m-%dT%H:%M:%S")
         last_ts = df.index[indices[-1]].strftime("%Y-%m-%dT%H:%M:%S")
         value = f'["{first_ts}", "{last_ts}"],'
@@ -93,7 +95,7 @@ def print_range(df: pd.Series, indices: pd.Index[int], text_box: pn.widgets.Text
     text_box.value = value
 
 
-def print_segment(df: pd.Series, indices: pd.Index[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
+def print_segment(df: pd.Series, indices: list[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
     if indices:
         first_ts = df.index[indices[0]].strftime("%Y-%m-%dT%H:%M:%S")
         last_ts = df.index[indices[-1]].strftime("%Y-%m-%dT%H:%M:%S")
@@ -144,6 +146,33 @@ def load_surge_tide(
         )
 
 
+def plot_line(df: pd.Series) -> hv.Curve:
+    return df.hvplot.line(
+        tools=["hover", "crosshair", "undo"],
+        grid=True,
+        alpha=0.5,
+        c="r",
+    ).opts(
+        responsive=True,
+        ylim=(df.min() * 1.001, df.max() * 1.001),
+    )
+
+
+def plot_points(df: pd.Series) -> hv.Scatter:
+    return df.hvplot.scatter(
+        tools=["box_select"],
+    ).opts(
+        active_tools=["box_zoom"],
+        color="gray",
+        size=2,
+        selection_color="red",
+        selection_alpha=1.0,
+        nonselection_color="gray",
+        nonselection_alpha=0.45,
+        responsive=True,
+    )
+
+
 def select_points() -> T.Any:
     on_apply = pn.depends(UI.apply)
 
@@ -170,30 +199,8 @@ def select_points() -> T.Any:
                     "<span style='color:red;'>Empty TS, no data for this year. Check start/end in JSON</span>"
                 )
 
-            curve = df.hvplot.line(
-                tools=["hover", "crosshair", "undo"],
-                grid=True,
-                alpha=0.5,
-                c="r",
-            ).opts(
-                responsive=True,
-                ylim=(df.min() * 1.001, df.max() * 1.001),
-            )
-            points = (
-                df.hvplot.scatter(
-                    tools=["box_select"],
-                )
-                .opts(
-                    active_tools=["box_zoom"],
-                    color="gray",
-                    size=2,
-                    selection_color="red",
-                    selection_alpha=1.0,
-                    nonselection_color="gray",
-                    nonselection_alpha=0.45,
-                )
-                .opts(responsive=True)
-            )
+            curve = plot_line(df)
+            points = plot_points(df)
             selection = holoviews.streams.Selection1D(source=points)
             selection.add_subscriber(lambda index: print_range(df=df, indices=index, text_box=points_range))
             selection.add_subscriber(lambda index: print_all_points(df=df, indices=index, text_box=points_all))
