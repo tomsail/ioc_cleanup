@@ -1,0 +1,21 @@
+{
+  "ioc_code": "SC43",
+  "sensor": "rad",
+  "notes": "",
+  "skip": false,
+  "wip": false,
+  "start": "2020-01-01T00:00:00",
+  "end": "2026-01-01T00:00:00",
+  "high": null,
+  "low": null,
+  "dropped_date_ranges": [
+    ["2022-03-24T09:47:00", "2022-03-24T10:31:00"],
+    ["2023-03-17T12:45:00", "2023-03-17T12:48:00"]
+  ],
+  "dropped_timestamps": [
+  ],
+  "segments": [],
+  "tsunami": [
+    ["2024-07-01T15:07:00", "2024-07-02T22:01:00"]
+  ]
+}

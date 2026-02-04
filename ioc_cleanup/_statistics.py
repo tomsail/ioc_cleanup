@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import pathlib
 import typing as T
+from pathlib import Path
 
 import multifutures
 import pandas as pd
 
+from . import _searvey
+from . import _tools
 from ._constants import DETIDE_END
 from ._constants import DETIDE_START
 from ._constants import SIMULATION_END
@@ -71,8 +74,24 @@ def calc_station_statistics_from_path(meta: pd.DataFrame, path: pathlib.Path) ->
     return stats
 
 
+def calc_station_statistics_from_json(meta: pd.DataFrame, path: pathlib.Path) -> dict[str, T.Any]:
+    ioc_code, sensor = path.stem.split("_")
+    raw = _searvey.load_station(ioc_code, Path("./data"), 2020, 2026).sort_index()
+    sr = _tools.clean(raw, ioc_code, sensor)
+    meta_row = meta[meta.ioc_code == ioc_code].iloc[0]
+    stats = calc_station_statistics(meta_row=meta_row, sensor=sensor, sr=sr)
+    return stats
+
+
 def calc_statistics(meta: pd.DataFrame, stations_dir: pathlib.Path, pattern: str = "*.parquet") -> pd.DataFrame:
     func_kwargs = [{"meta": meta, "path": path} for path in stations_dir.glob(pattern)]
     results = multifutures.multiprocess(calc_station_statistics_from_path, func_kwargs, check=True)
+    stats = pd.DataFrame([r.result for r in results])
+    return stats
+
+
+def calc_statistics_json(meta: pd.DataFrame, stations_dir: pathlib.Path, pattern: str = "*.json") -> pd.DataFrame:
+    func_kwargs = [{"meta": meta, "path": path} for path in stations_dir.glob(pattern)]
+    results = multifutures.multiprocess(calc_station_statistics_from_json, func_kwargs, check=True)
     stats = pd.DataFrame([r.result for r in results])
     return stats

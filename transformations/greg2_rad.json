@@ -1,7 +1,7 @@
 {
   "ioc_code": "greg2",
   "sensor": "rad",
-  "notes": "",
+  "notes": "not done. check prs chaneel",
   "skip": false,
   "wip": false,
   "start": "2022-01-01T00:00:00",

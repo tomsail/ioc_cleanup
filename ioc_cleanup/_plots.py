@@ -1,13 +1,47 @@
 from __future__ import annotations
 
-import functools
-import operator
 import typing as T
+from pathlib import Path
 
 import holoviews as hv
 import holoviews.streams
 import pandas as pd
 import panel as pn
+import param
+
+from . import _tools
+
+
+def apply_callback(event: param.parameterized.Event) -> None:
+    location = pn.state.location
+    if location is not None:
+        location._update_synced(event)
+
+
+class UI:
+    year: T.Any = pn.widgets.IntInput(
+        name="Select Year",
+        value=2020,
+        start=2020,
+        step=1,
+        width=200,
+    )
+    surge: T.Any = pn.widgets.Checkbox(
+        name="Detide Signal",
+        value=False,
+    )
+    demean: T.Any = pn.widgets.Checkbox(
+        name="Demean between breakpoints",
+        value=True,
+    )
+    station_sensor: T.Any = pn.widgets.Select(
+        name="Station and Sensor from the json list",
+        options=_tools.get_station_names(),
+        value=None,
+        width=200,
+    )
+    apply: T.Any = pn.widgets.Button(name="Apply", button_type="primary")
+    apply.on_click(apply_callback)
 
 
 def plot_geographic_coverage(
@@ -17,8 +51,19 @@ def plot_geographic_coverage(
 ) -> hv.DynamicMap:
     stations_bad = meta[~meta.ioc_code.isin(ioc_codes)]
     stations_good = meta[meta.ioc_code.isin(ioc_codes)]
-    plot_bad = stations_bad.hvplot.points(geo=True, tiles=True, color="red", hover=False, use_index=False, label="low")
+    plot_bad = stations_bad.hvplot.points(
+        x="lon",
+        y="lat",
+        geo=True,
+        tiles=True,
+        color="red",
+        hover=False,
+        use_index=False,
+        label="low",
+    )
     plot_good = stations_good.hvplot.points(
+        x="lon",
+        y="lat",
         geo=True,
         tiles=True,
         color="green",
@@ -29,64 +74,176 @@ def plot_geographic_coverage(
 
 
 # Create a function to print selected points
-def print_all_points(df: pd.DataFrame, indices: pd.Index[int]) -> None:
+def print_all_points(df: pd.Series, indices: list[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
     if indices:
-        print([p.isoformat() for p in df.iloc[indices].index.to_list()])  # noqa: T201
+        indices = sorted(indices)
+        timestamps = [f'    "{df.index[id_].strftime("%Y-%m-%dT%H:%M:%S")}"' for id_ in indices]
+        value = ",\n".join(timestamps)
     else:
-        print("No selection!")  # noqa: T201
+        value = "No selection!"
+    text_box.value = value
 
 
-def print_range(df: pd.DataFrame, indices: pd.Index[int]) -> None:
+def print_range(df: pd.Series, indices: list[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
     if indices:
-        first_ts = df.index[indices[0]]
-        last_ts = df.index[indices[-1]]
-        print(f'("{first_ts}", "{last_ts}"),')  # noqa: T201
+        indices = sorted(indices)
+        first_ts = df.index[indices[0]].strftime("%Y-%m-%dT%H:%M:%S")
+        last_ts = df.index[indices[-1]].strftime("%Y-%m-%dT%H:%M:%S")
+        value = f'["{first_ts}", "{last_ts}"],'
     else:
-        print("No selection!")  # noqa: T201
+        value = "No selection!"
+    text_box.value = value
 
 
-def select_points(df: pd.DataFrame) -> T.Any:
-    curve = df.hvplot.line(tools=["hover", "crosshair", "undo"], grid=True)
-    points = df.hvplot.scatter(tools=["box_select"]).opts(
-        color="gray",
+def print_segment(df: pd.Series, indices: list[int], text_box: pn.widgets.TextAreaInput) -> T.Any:
+    if indices:
+        first_ts = df.index[indices[0]].strftime("%Y-%m-%dT%H:%M:%S")
+        last_ts = df.index[indices[-1]].strftime("%Y-%m-%dT%H:%M:%S")
+        mean = df.iloc[indices[0] : indices[-1]].mean()
+
+        value = "{\n"
+        value += f'  "start": "{first_ts}",\n'
+        value += f'  "end": "{last_ts}",\n'
+        value += f'  "offset": {mean},\n'
+        value += '  "scale_factor": 1.0\n'
+        value += "}"
+    else:
+        value = "No selection!"
+    text_box.value = value
+
+
+def get_notes(station: str, sensor: str) -> str:
+    trans = _tools.load_transformation_from_path(
+        f"./transformations/{station}_{sensor}.json",
+    )
+    return trans.notes if trans.notes else "No notes"
+
+
+def load_surge_tide(
+    station: str,
+    sensor: str,
+    year: int,
+    *,
+    surge: bool,
+    demean: bool,
+    folder: Path = Path("./data"),
+) -> pd.Series:
+    if surge:
+        return _tools.load_surge_ts_for_year(
+            station,
+            sensor,
+            year,
+            folder,
+            demean=demean,
+        )
+    else:
+        return _tools.load_clean_ts_for_year(
+            station,
+            sensor,
+            year,
+            folder,
+            demean=demean,
+        )
+
+
+def plot_line(df: pd.Series) -> hv.Curve:
+    return df.hvplot.line(
+        tools=["hover", "crosshair", "undo"],
+        grid=True,
+        alpha=0.5,
+        c="r",
+    ).opts(
+        responsive=True,
+        ylim=(df.min() * 1.001, df.max() * 1.001),
+    )
+
+
+def plot_points(df: pd.Series) -> hv.Scatter:
+    return df.hvplot.scatter(
+        tools=["box_select"],
+    ).opts(
         active_tools=["box_zoom"],
-        nonselection_color="gray",
+        color="gray",
+        size=2,
         selection_color="red",
         selection_alpha=1.0,
-        nonselection_alpha=0.3,
-        size=1,
+        nonselection_color="gray",
+        nonselection_alpha=0.45,
+        responsive=True,
     )
-    selection = holoviews.streams.Selection1D(source=points)
-
-    button_all = pn.widgets.Button(name="Print All Points", button_type="primary")  # type: ignore[no-untyped-call]
-    button_all.on_click(lambda _: print_all_points(df=df, indices=selection.index))
-
-    button_range = pn.widgets.Button(name="Print Range", button_type="primary")  # type: ignore[no-untyped-call]
-    button_range.on_click(lambda _: print_range(df=df, indices=selection.index))
-
-    plot = curve * points
-    layout = pn.Column(plot.opts(width=1600, height=500), pn.Row(button_all, button_range))
-    out = pn.panel(layout).servable()
-    return out
 
 
-def compare_dataframes(*dataframes: T.Sequence[pd.DataFrame], title: str = "") -> hv.Layout:
-    assert len(dataframes) > 1, "You must pass at least two dataframes!"
-    title = title or ""
-    options = {
-        "tools": ["crosshair", "hover", "undo"],
-        "active_tools": ["box_zoom"],
-        "width": 1200,
-        "height": 500,
-        "show_grid": True,
-    }
-    renamed: list[pd.DataFrame] = []
-    for i, df in enumerate(dataframes):
-        assert isinstance(df, pd.DataFrame)
-        renamed.append(df.rename(columns=({f"{df.columns[0]}": f"{df.attrs['ioc_code']}_{df.attrs['sensor']}_{i}"})))
-    plots = functools.reduce(
-        operator.add,
-        (df.hvplot.line().opts(**options) for df in renamed),
+def select_points() -> T.Any:
+    on_apply = pn.depends(UI.apply)
+
+    def plot_dashboard(_event: T.Any) -> T.Any:
+        year = UI.year.value
+        surge = UI.surge.value
+        demean = UI.demean.value
+        station_sensor = UI.station_sensor.value
+        station, sensor = station_sensor.split("_")
+
+        points_all = pn.widgets.TextAreaInput(value="", height=200, placeholder="Selected indices will appear here")
+        points_range = pn.widgets.TextAreaInput(value="", height=200, placeholder="Selected indices will appear here")
+        segment = pn.widgets.TextAreaInput(value="", height=200, placeholder="Selected indices will appear here")
+        notes = pn.pane.Markdown("Notes inserted in the JSON will appear here")
+        error = pn.pane.Markdown("If there is any Error, it will appear here")
+
+        try:
+            df = load_surge_tide(station, sensor, year, surge=surge, demean=demean)
+            notes.object = get_notes(station, sensor)
+            if df.empty:
+                ts = pd.date_range(f"{year}", f"{year+1}", freq="24h")
+                df = pd.Series([0.0] * len(ts), index=ts)
+                error.object = (
+                    "<span style='color:red;'>Empty TS, no data for this year. Check start/end in JSON</span>"
+                )
+
+            curve = plot_line(df)
+            points = plot_points(df)
+            selection = holoviews.streams.Selection1D(source=points)
+            selection.add_subscriber(lambda index: print_range(df=df, indices=index, text_box=points_range))
+            selection.add_subscriber(lambda index: print_all_points(df=df, indices=index, text_box=points_all))
+            selection.add_subscriber(lambda index: print_segment(df=df, indices=index, text_box=segment))
+
+            plot = curve * points
+
+        except Exception as e:
+            ts = pd.date_range(f"{year}", f"{year+1}", freq="24h")
+            df = pd.Series([0.0] * len(ts), index=ts)
+            hv_ = T.cast(T.Any, df).hvplot
+            plot = hv_.line() * hv_.scatter()
+            error.object = f"<span style='color:red;'>{e}</span>"
+
+        return pn.Column(
+            pn.Row(
+                pn.pane.HoloViews(plot.opts(responsive=True), sizing_mode="stretch_width", height=700),
+                width_policy="max",
+            ),
+            pn.Row(
+                pn.Column("## Selected Indices:", points_all),
+                pn.Column("## Selected Ranges:", points_range),
+                pn.Column("## Segment info:", segment),
+                pn.Column("## Notes:", notes),
+            ),
+            pn.Row(
+                pn.Column("## Error:", error),
+            ),
+        )
+
+    page = pn.template.FastListTemplate(
+        sidebar_width=250,
+        title="IOC Cleanup dashboard",
+        sidebar=[
+            UI.station_sensor,
+            UI.year,
+            UI.surge,
+            UI.demean,
+            UI.apply,
+        ],
+        main=pn.Column(
+            on_apply(plot_dashboard),
+        ),
     )
-    layout = T.cast(hv.Layout, hv.Layout(plots).cols(1).opts(title=title))
-    return layout
+
+    return page.servable()

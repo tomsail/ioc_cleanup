@@ -21,9 +21,12 @@ test:
 
 cov:
 	coverage erase
-	python -WError -m pytest --cov=ioc_cleanup --cov-report term-missing --durations=10 --pdb
+	python -WError -m pytest --cov=ioc_cleanup --cov-report term-missing --durations=10
 
 deps:
 	pre-commit run poetry-lock -a
 	pre-commit run poetry-check -a
 	pre-commit run poetry-export -a
+
+docs:
+	zensical build
