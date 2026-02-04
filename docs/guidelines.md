@@ -1,5 +1,7 @@
-# Caveats and limitations
-Please be aware of the following:
+# Guidelines for cleaning data
+
+!!! info "Important"
+    If you want to clean data, please read carefully the following guidelines:
 
 ## Download data yourself
 This repository does NOT contain IOC data and does not manage data acquisition.
@@ -154,7 +156,7 @@ Some steps - or offsets - can be caused by mulitple reasons:
 
     See details on the [JSON structure](reference/json-schema/)
 
-!!! warning
+!!! warning "Disclaimer for long steps or offsets"
     We don't provide any fix for steps or offsets in the data.
 
     The [`ioc_cleanup.clean()`](reference/python-api/#ioc_cleanup.transform) does not demean any part of the signal.
@@ -163,7 +165,7 @@ Some steps - or offsets - can be caused by mulitple reasons:
 
 ### Vertical datum
 
-!!! warning
+!!! warning "Vertical datum"
     Vertical datum are not yet corrected in `ioc_cleanup`.
 
     It is unclear how local data providers have set-up their sensor calibration and if they all respect local vertical datum conventions.
@@ -174,6 +176,6 @@ Some steps - or offsets - can be caused by mulitple reasons:
 
 ### Subjectivity
 
-!!! warning
+!!! warning "Subjectivity"
      * Cleaning decisions are inherently subjective
      * Different operators may disagree on what should be discarded

@@ -1,5 +1,6 @@
 [project]
 site_name = "IOC Cleanup"
+site_url = "https://tomsail.github.io/ioc_cleanup/"
 
 docs_dir = "docs"
 site_dir = "site"
@@ -15,7 +16,7 @@ nav = [
   {"Dashboard" = [
     {"Usage" = "workflows/dashboard.md"},
   ]},
-  {"Limitations" = "limitations.md"},
+  {"Guidelines" = "guidelines.md"},
   {"Contributing" = "contributing.md"},
 ]
 
