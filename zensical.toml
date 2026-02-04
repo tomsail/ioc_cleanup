@@ -1,8 +1,8 @@
 [project]
 site_name = "IOC Cleanup"
 
-docs_dir = "docs"
-site_dir = "site"
+docs_dir = "docs_"
+site_dir = "docs"
 
 nav = [
   {"Home" = "index.md"},
