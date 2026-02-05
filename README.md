@@ -4,4 +4,4 @@
 
 ![demo](./docs/assets/dashboard_light.png)
 
-See the docs 
+See the [docs]([url](https://tomsail.github.io/ioc_cleanup) 
