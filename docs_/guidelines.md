@@ -1,11 +1,13 @@
-# Caveats and limitations
-Please be aware of the following:
+# Guidelines for cleaning data
+
+!!! info "Important"
+    If you want to clean data, please read carefully the following guidelines:
 
 ## Download data yourself
 This repository does NOT contain IOC data and does not manage data acquisition.
 
   - Data download is not handled internally
-  - Examples (in this `README` or in `tests`) use the [`searvey`](https://github.com/oceanmodeling/searvey) package
+  - Examples (in the [minimal example](/index.md#minimal-example) or in `tests`) use the [`searvey`](https://github.com/oceanmodeling/searvey) package
   - A release of cleaned data through Zenodo is considered (although not planned yet)
 
 ## Cleaning is difficult - Examples

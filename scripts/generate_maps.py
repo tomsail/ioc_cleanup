@@ -12,6 +12,7 @@ import ioc_cleanup as C
 
 IOC = C.get_meta()
 MAX = 2
+YEAR = 2020
 
 
 def extract_waves(time, eta, crossing="up"):
@@ -78,6 +79,7 @@ def extract_waves(time, eta, crossing="up"):
 
 # cleaned stations
 clean_stations_list = []
+not_yet_clean_stations_list = []
 
 # kamchaptka tsunami
 start = pd.Timestamp("2025-07-01")
@@ -94,6 +96,8 @@ for station in IOC.ioc_code.tolist():
             # cleaned station test
             if not t.skip:
                 clean_stations_list.append(station)
+                if t.start.year > YEAR:
+                    not_yet_clean_stations_list.append(station)
 
             # tsunami test
             for ts in t.tsunami:
@@ -160,7 +164,18 @@ clean_ioc_map = IOC[IOC.ioc_code.isin(clean_stations_list)].hvplot.points(
     hover_cols="ioc_code",
     legend="bottom_right",
 )
-map_ = clean_ioc_map * all_ioc_map
+not_yet_clean_ioc_map = IOC[IOC.ioc_code.isin(not_yet_clean_stations_list)].hvplot.points(
+    geo=True,
+    x="lon",
+    y="lat",
+    c="orange",
+    s=50,
+    tiles=True,
+    label="Remaining raw IOC stations",
+    hover_cols="ioc_code",
+    legend="bottom_right",
+)
+map_ = clean_ioc_map * not_yet_clean_ioc_map * all_ioc_map
 pane_ = pn.Row(
     pn.pane.HoloViews(
         map_.opts(responsive=True),
@@ -169,4 +184,4 @@ pane_ = pn.Row(
     ),
     width_policy="max",
 )
-pane_.save("docs/cleaned_map.html")
+pane_.save("docs_/cleaned_map.html")

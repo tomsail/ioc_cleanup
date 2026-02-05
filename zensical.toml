@@ -15,7 +15,7 @@ nav = [
   {"Dashboard" = [
     {"Usage" = "workflows/dashboard.md"},
   ]},
-  {"Limitations" = "limitations.md"},
+  {"Guidelines" = "guidelines.md"},
   {"Contributing" = "contributing.md"},
 ]
 
