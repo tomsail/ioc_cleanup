@@ -19,7 +19,7 @@ KAMCHATKA_START = pd.Timestamp("2025-07-01")
 KAMCHATKA_END = pd.Timestamp("2025-10-01")
 TONGA_START = pd.Timestamp("2022-01-01")
 TONGA_END = pd.Timestamp("2022-01-31")
-DOCS_DIR = Path("docs")
+DOCS_DIR = Path("docs/assets")
 # plot kwargs
 MAP_COMMON = {
     "geo": True,
@@ -291,7 +291,6 @@ def main():
 
     ioc = C.get_meta()
     stats = C.calc_statistics(ioc, stations_dir=C.TRANSFORMATIONS_DIR, pattern="*.json")
-    stats = assign_oceans(stats)
     stats = assign_oceans(stats)
     ioc = assign_oceans(ioc)
     stats.to_csv(DOCS_DIR / "assets" / "cleaned_ioc_stations.csv", index=False)

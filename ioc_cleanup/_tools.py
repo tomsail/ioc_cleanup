@@ -163,7 +163,9 @@ def clean(df: pd.DataFrame, station: str, sensor: str) -> pd.Series:
         Cleaned sea-level time series for the selected sensor.
     """
     trans = load_transformation_from_path("./transformations/" + station + "_" + sensor + ".json")
-    return transform(df, trans)[sensor]
+    ts = transform(df, trans)[sensor]
+    ts.attrs["cleaning_date"] = pd.Timestamp.now().isoformat()
+    return ts
 
 
 def surge(ts: pd.Series, opts: T.Mapping[str, T.Any], rsmp: int | None) -> pd.Series:
