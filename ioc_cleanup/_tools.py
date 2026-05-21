@@ -121,7 +121,9 @@ def transform(df: pd.DataFrame, transformation: _models.Transformation | None = 
             0
         ]  # this step is needed to select only timestamps within the DataFrame time window
         df.loc[t_[drop_index], :] = np.nan
-    df.attrs["breakpoints"] = sorted(transformation.breakpoints)
+    df.attrs["breakpoints"] = [
+        b.isoformat() for b in sorted(transformation.breakpoints)
+    ]  # isoformat otherwise the parquet export will fail
     df.attrs["status"] = "transformed"
     return df
 
