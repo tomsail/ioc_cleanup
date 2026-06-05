@@ -4,6 +4,13 @@ import pathlib
 from importlib.metadata import version
 
 import pandas as pd
+import pooch
+
+REGISTRY = pooch.create(
+    path=pooch.os_cache("ioc_cleanup"),
+    base_url="to_be_defined",
+    version="v0.1.0",
+)
 
 DATA_DIR = pathlib.Path("data")
 SPLIT_DIR = pathlib.Path("split")

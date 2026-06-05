@@ -14,7 +14,7 @@ from . import _models
 from . import _searvey
 
 # PATH
-JSON_DIR = Path("transformations")
+JSON_DIR = _constants.TRANSFORMATIONS_DIR
 IOC = _searvey.get_meta()
 OPTS = {
     "constit": "auto",
@@ -49,10 +49,17 @@ def dump_transformation(
         fd.write("\n")
 
 
+def resolve_transformation_dir() -> Path:
+    if JSON_DIR.exists():
+        return JSON_DIR
+    else:
+        return Path(_constants.REGISTRY.fetch())
+
+
 def load_transformation(
     ioc_code: str,
     sensor: str,
-    src_dir: str | os.PathLike[str] = _constants.TRANSFORMATIONS_DIR,
+    src_dir: str | os.PathLike[str] = JSON_DIR,
 ) -> _models.Transformation:
     """
     Load a transformation definition for a station and sensor.
@@ -69,7 +76,9 @@ def load_transformation(
     Returns:
         Parsed transformation model.
     """
-    path = f"{src_dir}/{ioc_code}_{sensor}.json"
+    if src_dir is None:
+        src_dir = resolve_transformation_dir()
+    path = Path(src_dir) / f"{ioc_code}_{sensor}.json"
     return load_transformation_from_path(path)
 
 
